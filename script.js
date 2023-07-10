@@ -195,7 +195,7 @@ div.addEventListener('mouseup', function(e) {
         if (num2 == null) {
             oper = '/';
         } else {
-            num1 = operate(num2, oper, num2);
+            num1 = operate(num1, oper, num2);
             screen.innerHTML = num1;
             oper = '/';
             num2 = null;
@@ -204,3 +204,20 @@ div.addEventListener('mouseup', function(e) {
     current = 'op';
 });
 const eq = document.querySelector('#eq');
+eq.addEventListener('mouseup', function(e) {
+    if (oper != null) {
+        if (num2 != null) {
+            num1 = operate(num1, oper, num2);
+            screen.innerHTML = num1;
+            oper = null;
+            num2 = null;
+        } else {
+            num2 = num1;
+            num1 = operate(num1, oper, num2);
+            screen.innerHTML = num1;
+            oper = null;
+            num2 = null;
+        }
+    }
+    current = 'num1';
+})
