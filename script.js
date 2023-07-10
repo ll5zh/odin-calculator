@@ -20,7 +20,7 @@ function divFunc(n1, n2) {
 let num1 = 0;
 let oper = null;
 let num2 = null;
-let cur;
+let current;
 let ans;
 
 function operate(n1, op, n2) {
@@ -82,13 +82,14 @@ AC.addEventListener('click', function(e) {
 
 const posNeg = document.querySelector('#posneg');
 posNeg.addEventListener('click', function(e) {
-    if (screen.innerHTML != 0) {
-        let val = screen.innerHTML;
-        screen.innerHTML = -val;
+    if (current == 'num1' && num1 != 0) {
+        num1 = -num1;
+        screen.innerHTML = num1;
+    } else if (current == 'num2' && num2 != 0) {
+        num2 = -num2;
+        screen.innerHTML = num2;
     }
-}); // add negative functionality
-
-let prevInput = 0;
+});
 
 function readNum(input) {
     if (oper == null) {
@@ -98,6 +99,7 @@ function readNum(input) {
             num1 = num1 + "" + input;
         }
         screen.innerHTML = num1;
+        current = 'num1'; //
     } else {
         if (num2 == null || num2 == 0) {
             num2 = input;
@@ -105,6 +107,7 @@ function readNum(input) {
             num2 = num2 + "" + input;
         }
         screen.innerHTML = num2;
+        current = 'num2'; //
     }
 }
 
@@ -114,12 +117,15 @@ zero.addEventListener('mouseup', function(e) {
     if (oper == null && num1 != 0) {
         num1 = num1 + "" + 0;
         screen.innerHTML = num1;
+        current = 'num1';
     } else if (oper != null && num2 == null) {
         num2 = 0;
         screen.innerHTML = num2;
+        current = 'num2';
     } else if (oper != null && num2 != 0) {
         num2 = num2 + "" + 0;
         screen.innerHTML = num2;
+        current = 'num2';
     }
 });
 
@@ -147,6 +153,7 @@ add.addEventListener('mouseup', function(e) {
             num2 = null;
         }
     }
+    current = 'op';
 });
 const sub = document.querySelector('#sub');
 sub.addEventListener('mouseup', function(e) {
@@ -162,6 +169,7 @@ sub.addEventListener('mouseup', function(e) {
             num2 = null;
         }
     }
+    current = 'op';
 });
 const mult = document.querySelector('#mult');
 mult.addEventListener('mouseup', function(e) {
@@ -177,6 +185,7 @@ mult.addEventListener('mouseup', function(e) {
             num2 = null;
         }
     }
+    current = 'op';
 });
 const div = document.querySelector('#div');
 div.addEventListener('mouseup', function(e) {
@@ -192,5 +201,6 @@ div.addEventListener('mouseup', function(e) {
             num2 = null;
         }
     }
+    current = 'op';
 });
 const eq = document.querySelector('#eq');
