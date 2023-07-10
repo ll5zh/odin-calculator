@@ -20,8 +20,9 @@ function divFunc(n1, n2) {
 let num1 = 0;
 let oper = null;
 let num2 = null;
-let current;
-let ans;
+let current = 'num1';
+let isDecimal = false;
+let isFloating = false;
 
 function operate(n1, op, n2) {
     if (op == '+') {
@@ -78,6 +79,8 @@ AC.addEventListener('click', function(e) {
     num1 = 0;
     oper = null;
     num2 = null;
+    isDecimal = false;
+    isFloating = false;
 });
 
 const posNeg = document.querySelector('#posneg');
@@ -94,17 +97,37 @@ posNeg.addEventListener('click', function(e) {
 function readNum(input) {
     if (oper == null) {
         if (num1 == 0) {
-            num1 = input;
+            if (isFloating == true) {
+                num1 = 0 + input / 10;
+                isFloating = false;
+            } else {
+                num1 = input;
+            }
         } else {
-            num1 = num1 + "" + input;
+            if (isFloating == true) {
+                num1 = num1 + input / 10;
+                isFloating = false;
+            } else {
+                num1 = num1 + "" + input;
+            }
         }
         screen.innerHTML = num1;
         current = 'num1'; //
     } else {
         if (num2 == null || num2 == 0) {
-            num2 = input;
+            if (isFloating == true) {
+                num2 = 0 + input / 10;
+                isFloating = false;
+            } else {
+                num2 = input;
+            }
         } else {
-            num2 = num2 + "" + input;
+            if (isFloating == true) {
+                num2 = num2 + input / 10;
+                isFloating = false;
+            } else {
+                num2 = num2 + "" + input;
+            }
         }
         screen.innerHTML = num2;
         current = 'num2'; //
@@ -130,7 +153,7 @@ zero.addEventListener('mouseup', function(e) {
 });
 
 numBtns.forEach(function(currentValue, currentIndex) {
-    if (currentIndex == 9) {
+    if (currentIndex == 9 || currentIndex == 10) {
         return;
     }
     currentValue.addEventListener('mouseup', function(e) {
@@ -154,6 +177,7 @@ add.addEventListener('mouseup', function(e) {
         }
     }
     current = 'op';
+    isDecimal = false;
 });
 const sub = document.querySelector('#sub');
 sub.addEventListener('mouseup', function(e) {
@@ -170,6 +194,7 @@ sub.addEventListener('mouseup', function(e) {
         }
     }
     current = 'op';
+    isDecimal = false;
 });
 const mult = document.querySelector('#mult');
 mult.addEventListener('mouseup', function(e) {
@@ -186,6 +211,7 @@ mult.addEventListener('mouseup', function(e) {
         }
     }
     current = 'op';
+    isDecimal = false;
 });
 const div = document.querySelector('#div');
 div.addEventListener('mouseup', function(e) {
@@ -202,6 +228,7 @@ div.addEventListener('mouseup', function(e) {
         }
     }
     current = 'op';
+    isDecimal = false;
 });
 const eq = document.querySelector('#eq');
 eq.addEventListener('mouseup', function(e) {
@@ -209,6 +236,7 @@ eq.addEventListener('mouseup', function(e) {
         if (num2 != null) {
             num1 = operate(num1, oper, num2);
             screen.innerHTML = num1;
+            console.log(screen.innerHTML);
             oper = null;
             num2 = null;
         } else {
@@ -220,4 +248,33 @@ eq.addEventListener('mouseup', function(e) {
         }
     }
     current = 'num1';
+    isDecimal = getDecimalStatus(num1);
 })
+
+const dot = document.querySelector('#dot');
+dot.addEventListener('mouseup', function(e) {
+    if (isDecimal == false) {
+        if (current == 'num1') {
+            screen.innerHTML = num1 + '.';
+            isFloating = true;
+        } else if (current == 'num2') {
+            screen.innerHTML = num2 + '.';
+            isFloating = true;
+        } else if (current == 'op') {
+            num2 = 0;
+            current = 'num2';
+            screen.innerHTML = num2 + '.';
+            isFloating = true;
+        }
+        isDecimal = true;
+        // find way to reset/test isDecimal
+    }
+});
+
+function getDecimalStatus(num) {
+    numStr = num.toString();
+    if (numStr.indexOf('.') < 0) {
+        return false;
+    }
+    return true;
+}
