@@ -1,35 +1,37 @@
-function add(n1, n2) {
-    return n1 + n2;
+function addFunc(n1, n2) {
+    return Number(n1) + Number(n2);
 }
 
-function subtract(n1, n2) {
-    return n1 - n2;
+function subFunc(n1, n2) {
+    return Number(n1) - Number(n2);
 }
 
-function multiply(n1, n2) {
-    return n1 * n2;
+function multFunc(n1, n2) {
+    return Number(n1) * Number(n2);
 }
 
-function divide(n1, n2) {
+function divFunc(n1, n2) {
     if (n2 == 0) {
         return "ERROR"
     }
-    return n1 / n2;
+    return Number(n1) / Number(n2);
 }
 
-let num1;
-let oper;
-let num2;
+let num1 = 0;
+let oper = null;
+let num2 = null;
+let cur;
+let ans;
 
 function operate(n1, op, n2) {
     if (op == '+') {
-        add(n1, n2);
+        return addFunc(n1, n2);
     } else if (op == '-') {
-        subtract(n1, n2);
+        return subFunc(n1, n2);
     } else if (op == '*') {
-        multiply(n1, n2);
+        return multFunc(n1, n2);
     } else if (op == '/') {
-        divide(n1, n2);
+        return divFunc(n1, n2);
     }
 }
 
@@ -68,3 +70,127 @@ opBtns.forEach(function(currentValue) {
         currentValue.style.cssText = 'background-color: rgb(251, 201, 209)';
     });
 });
+
+const AC = document.querySelector('#ac');
+const screen = document.querySelector('.screen');
+AC.addEventListener('click', function(e) {
+    screen.innerHTML = 0;
+    num1 = 0;
+    oper = null;
+    num2 = null;
+});
+
+const posNeg = document.querySelector('#posneg');
+posNeg.addEventListener('click', function(e) {
+    if (screen.innerHTML != 0) {
+        let val = screen.innerHTML;
+        screen.innerHTML = -val;
+    }
+}); // add negative functionality
+
+let prevInput = 0;
+
+function readNum(input) {
+    if (oper == null) {
+        if (num1 == 0) {
+            num1 = input;
+        } else {
+            num1 = num1 + "" + input;
+        }
+        screen.innerHTML = num1;
+    } else {
+        if (num2 == null || num2 == 0) {
+            num2 = input;
+        } else {
+            num2 = num2 + "" + input;
+        }
+        screen.innerHTML = num2;
+    }
+}
+
+// numbers
+const zero = document.querySelector('#zero');
+zero.addEventListener('mouseup', function(e) {
+    if (oper == null && num1 != 0) {
+        num1 = num1 + "" + 0;
+        screen.innerHTML = num1;
+    } else if (oper != null && num2 == null) {
+        num2 = 0;
+        screen.innerHTML = num2;
+    } else if (oper != null && num2 != 0) {
+        num2 = num2 + "" + 0;
+        screen.innerHTML = num2;
+    }
+});
+
+numBtns.forEach(function(currentValue, currentIndex) {
+    if (currentIndex == 9) {
+        return;
+    }
+    currentValue.addEventListener('mouseup', function(e) {
+        readNum(Number(currentValue.textContent));
+    });
+});
+
+// operations
+const add = document.querySelector('#add');
+add.addEventListener('mouseup', function(e) {
+    if (oper == null) {
+        oper = '+';
+    } else {
+        if (num2 == null) {
+            oper = '+';
+        } else {
+            num1 = operate(num1, oper, num2);
+            screen.innerHTML = num1;
+            oper = '+';
+            num2 = null;
+        }
+    }
+});
+const sub = document.querySelector('#sub');
+sub.addEventListener('mouseup', function(e) {
+    if (oper == null) {
+        oper = '-';
+    } else {
+        if (num2 == null) {
+            oper = '-';
+        } else {
+            num1 = operate(num1, oper, num2);
+            screen.innerHTML = num1;
+            oper = '-';
+            num2 = null;
+        }
+    }
+});
+const mult = document.querySelector('#mult');
+mult.addEventListener('mouseup', function(e) {
+    if (oper == null) {
+        oper = '*';
+    } else {
+        if (num2 == null) {
+            oper = '*';
+        } else {
+            num1 = operate(num1, oper, num2);
+            screen.innerHTML = num1;
+            oper = '*';
+            num2 = null;
+        }
+    }
+});
+const div = document.querySelector('#div');
+div.addEventListener('mouseup', function(e) {
+    if (oper == null) {
+        oper = '/';
+    } else {
+        if (num2 == null) {
+            oper = '/';
+        } else {
+            num1 = operate(num2, oper, num2);
+            screen.innerHTML = num1;
+            oper = '/';
+            num2 = null;
+        }
+    }
+});
+const eq = document.querySelector('#eq');

@@ -67,6 +67,7 @@ body {
     justify-content: center;
     min-height: 100%;
     font-size: 30px;
+    overflow: hidden;
 }
 
 .btn.top {
@@ -79,4 +80,10 @@ body {
 
 .btn.op {
     background-color: rgb(251, 201, 209);
+}
+
+button {
+    text-decoration: none;
+    border: none;
+    font-family: "Tahoma", sans-serif;
 }
