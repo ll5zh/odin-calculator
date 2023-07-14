@@ -23,6 +23,7 @@ let num2 = null;
 let current = 'num1';
 let isDecimal = false;
 let isFloating = false;
+let display = 0;
 
 function operate(n1, op, n2) {
     if (op == '+') {
@@ -73,7 +74,6 @@ opBtns.forEach(function(currentValue) {
 });
 
 const AC = document.querySelector('#ac');
-const screen = document.querySelector('.screen');
 AC.addEventListener('click', function(e) {
     screen.innerHTML = 0;
     num1 = 0;
@@ -82,6 +82,8 @@ AC.addEventListener('click', function(e) {
     isDecimal = false;
     isFloating = false;
 });
+
+const screen = document.querySelector('.screen');
 
 const posNeg = document.querySelector('#posneg');
 posNeg.addEventListener('click', function(e) {
@@ -109,10 +111,12 @@ function readNum(input) {
                 isFloating = false;
             } else {
                 num1 = num1 + "" + input;
+                num1 = squeezeNum(num1);
             }
         }
         screen.innerHTML = num1;
         current = 'num1'; //
+        isDecimal = getDecimalStatus(num1);
     } else {
         if (num2 == null || num2 == 0) {
             if (isFloating == true) {
@@ -127,10 +131,12 @@ function readNum(input) {
                 isFloating = false;
             } else {
                 num2 = num2 + "" + input;
+                num2 = squeezeNum(num2);
             }
         }
         screen.innerHTML = num2;
-        current = 'num2'; //
+        current = 'num2';
+        isDecimal = getDecimalStatus(num2);
     }
 }
 
@@ -139,16 +145,21 @@ const zero = document.querySelector('#zero');
 zero.addEventListener('mouseup', function(e) {
     if (oper == null && num1 != 0) {
         num1 = num1 + "" + 0;
+        num1 = squeezeNum(num1);
         screen.innerHTML = num1;
         current = 'num1';
+        isDecimal = getDecimalStatus(num1);
     } else if (oper != null && num2 == null) {
         num2 = 0;
         screen.innerHTML = num2;
         current = 'num2';
+        isDecimal = getDecimalStatus(num2);
     } else if (oper != null && num2 != 0) {
         num2 = num2 + "" + 0;
+        num2 = squeezeNum(num2);
         screen.innerHTML = num2;
         current = 'num2';
+        isDecimal = getDecimalStatus(num2);
     }
 });
 
@@ -170,14 +181,14 @@ add.addEventListener('mouseup', function(e) {
         if (num2 == null) {
             oper = '+';
         } else {
-            num1 = operate(num1, oper, num2);
+            num1 = squeezeCalc(operate(num1, oper, num2));
             screen.innerHTML = num1;
             oper = '+';
             num2 = null;
+            isDecimal = getDecimalStatus(num1);
         }
     }
     current = 'op';
-    isDecimal = false;
 });
 const sub = document.querySelector('#sub');
 sub.addEventListener('mouseup', function(e) {
@@ -187,14 +198,14 @@ sub.addEventListener('mouseup', function(e) {
         if (num2 == null) {
             oper = '-';
         } else {
-            num1 = operate(num1, oper, num2);
+            num1 = squeezeCalc(operate(num1, oper, num2));
             screen.innerHTML = num1;
             oper = '-';
             num2 = null;
+            isDecimal = getDecimalStatus(num1);
         }
     }
     current = 'op';
-    isDecimal = false;
 });
 const mult = document.querySelector('#mult');
 mult.addEventListener('mouseup', function(e) {
@@ -204,14 +215,14 @@ mult.addEventListener('mouseup', function(e) {
         if (num2 == null) {
             oper = '*';
         } else {
-            num1 = operate(num1, oper, num2);
+            num1 = squeezeCalc(operate(num1, oper, num2));
             screen.innerHTML = num1;
             oper = '*';
             num2 = null;
+            isDecimal = getDecimalStatus(num1);
         }
     }
     current = 'op';
-    isDecimal = false;
 });
 const div = document.querySelector('#div');
 div.addEventListener('mouseup', function(e) {
@@ -221,22 +232,21 @@ div.addEventListener('mouseup', function(e) {
         if (num2 == null) {
             oper = '/';
         } else {
-            num1 = operate(num1, oper, num2);
+            num1 = squeezeCalc(operate(num1, oper, num2));
             screen.innerHTML = num1;
             oper = '/';
             num2 = null;
+            isDecimal = getDecimalStatus(num1);
         }
     }
     current = 'op';
-    isDecimal = false;
 });
 const eq = document.querySelector('#eq');
 eq.addEventListener('mouseup', function(e) {
     if (oper != null) {
         if (num2 != null) {
-            num1 = operate(num1, oper, num2);
+            num1 = squeezeCalc(operate(num1, oper, num2));
             screen.innerHTML = num1;
-            console.log(screen.innerHTML);
             oper = null;
             num2 = null;
         } else {
@@ -267,14 +277,47 @@ dot.addEventListener('mouseup', function(e) {
             isFloating = true;
         }
         isDecimal = true;
-        // find way to reset/test isDecimal
     }
 });
 
 function getDecimalStatus(num) {
-    numStr = num.toString();
+    let numStr = num.toString();
     if (numStr.indexOf('.') < 0) {
         return false;
     }
     return true;
 }
+
+function squeezeCalc(num) {
+    // screen displays a maximum length of 10
+    // account for negative number possibility (max 9 digits + 1 possible negative sign)
+    let numStr = num.toString();
+    if (numStr.length > 9) {
+        // if value bigger than 999999999, display no bigger
+        if (num > 999999999) {
+            // return max possible value
+            return 999999999;
+        } else if (num < -999999999) {
+            // return min possible value
+            return -999999999;
+        }
+        // if no decimal, splice so it's length 9 if positive, length 10 if negative (9 digits)
+        else if (numStr.length > 9) { 
+            if (num < 0) {
+                return Number(numStr.substr(0, 10));
+            } else {
+                return Number(numStr.substr(0, 9));
+            }
+        }
+    }
+    return num;
+}
+
+function squeezeNum(num) {
+    let numStr = num.toString();
+    if (numStr.length > 9) {
+        return Number(numStr.substr(0, 9));
+    }
+    return num;
+}
+
